@@ -82,6 +82,19 @@ gulp.task('watchify', () => {
     .pipe(source(jsBundleFile))
     .pipe(gulp.dest('.tmp/scripts'));
 });
+
+function lint(files, options) {
+  return () => {
+    return gulp.src(files)
+      .pipe(reload({stream: true, once: true}))
+      .pipe($.eslint(options))
+      .pipe($.eslint.format())
+      .pipe($.if(!browserSync.active, $.eslint.failAfterError()));
+  };
+}
+
+gulp.task('lint', lint('app/scripts/**/*.js'));
+
 gulp.task('html', ['styles'], () => {
   const assets = $.useref.assets({
     searchPath: ['.tmp', 'app', '.']
